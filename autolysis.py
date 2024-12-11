@@ -79,14 +79,6 @@ def visualize_data(df, correlation_matrix, output_dir):
         plt.savefig(output_path)
         plt.close()
 
-    # Correlation heatmap
-    plt.figure(figsize=(10, 8))
-    sns.heatmap(correlation_matrix, annot=True, cmap="coolwarm", fmt=".2f")
-    plt.title("Correlation Matrix Heatmap")
-    output_path = os.path.join(output_dir, "correlation_heatmap.png")
-    plt.savefig(output_path)
-    plt.close()
-
 
 def generate_story(df, analysis_results, output_dir):
     common_data_for_prompt = ("Here is the summary of a dataset:\n\n"
@@ -106,7 +98,7 @@ def generate_story(df, analysis_results, output_dir):
 
     summary_prompt = (
             common_data_for_prompt + "\n\n"
-                                     "Write a story summarizing the data, analysis, and potential insights. add emoji im the content to make it more stylish and readable"
+                                     "Write a story summarizing the data, analysis, and potential insights and tabular infos about missing values,data types (if any). use emoji in the content to make it more stylish and readable"
     )
     story = send_text_to_llm(summary_prompt)
 
@@ -128,7 +120,7 @@ def generate_story(df, analysis_results, output_dir):
     with open(os.path.join(output_dir, "README.md"), "w") as f:
         f.write("# 🤖Automated Analysis Report\n\n")
         f.write("#### 📦 Column(s) Available \n\n")
-        f.write(f"`{'`,`'.join(analysis_results['column_names'].to_list())} \n\n")
+        f.write(f"`{'`,`'.join(analysis_results['column_names'].to_list())}` \n\n")
         f.write("#### 🪫Column with missing Values \n\n")
         f.write(analysis_results['missing_values'][analysis_results['missing_values'] > 0].to_markdown())
         f.write("\n\n")

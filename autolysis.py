@@ -132,12 +132,12 @@ def generate_story(df, analysis_results, output_dir):
         f.write("\n\n### 🌉Visual Analysis 2.0 \n")
         for img_file in os.listdir(output_dir):
             if img_file.endswith(".png"):
-                f.write(f"![{img_file}]({img_file})\n")
+                f.write(f"![{img_file}]({img_file.replace(' ' ,'_')})\n")
 
         f.write("\n\n### 🌉Visualizations of Distribution \n")
         for img_file in os.listdir(output_dir + '/static'):
             if img_file.endswith(".png"):
-                f.write(f"![{img_file}](static/{img_file})\n")
+                f.write(f"![{img_file}](static/{img_file.replace(' ','_')})\n")
 
 
 def main():

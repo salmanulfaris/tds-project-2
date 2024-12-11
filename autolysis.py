@@ -20,7 +20,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-AIPROXY_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IjIyZjIwMDA0MzhAZHMuc3R1ZHkuaWl0bS5hYy5pbiJ9.rIsSG-6GfCF62SVruPGIGQQHaS1I6s0_oWRY7sMtkg0"
+AIPROXY_TOKEN = os.getenv("AIPROXY_TOKEN")
+
 LLM_ENDPOINT = "http://aiproxy.sanand.workers.dev/openai/v1/chat/completions"
 
 if not AIPROXY_TOKEN:
@@ -105,7 +106,7 @@ def generate_story(df, analysis_results, output_dir):
     visualisation_prompt = (
             common_data_for_prompt + "\n\n"
                                      "write code to generate visual analysis for an data. return only the python code,df is the variable which "
-                                     f"dataframe is present and plt is available as matplotlib and seaborn as sns and save those image to {output_dir}"
+                                     f"dataframe is present and plt is available as matplotlib and seaborn as sns and save those image to {output_dir}/ai-charts "
     )
     visualisation_code = send_text_to_llm(visualisation_prompt)
 
@@ -129,9 +130,9 @@ def generate_story(df, analysis_results, output_dir):
             f.write(story)
 
         f.write("\n\n### 🌉Visual Analysis 2.0 \n")
-        for img_file in os.listdir(output_dir):
+        for img_file in os.listdir(output_dir + '/ai-charts'):
             if img_file.endswith(".png"):
-                f.write(f"![{img_file}]({img_file})\n")
+                f.write(f"![{img_file}](ai-charts/{img_file})\n")
 
         f.write("\n\n### 🌉Visualizations of Distribution \n")
         for img_file in os.listdir(output_dir + '/static'):
@@ -152,6 +153,7 @@ def main():
     output_dir = os.path.splitext(input_file)[0]
     os.makedirs(output_dir, exist_ok=True)
     os.makedirs(output_dir + '/static', exist_ok=True)
+    os.makedirs(output_dir + '/ai-charts', exist_ok=True)
 
     try:
         df = pd.read_csv(input_file, encoding='latin-1')

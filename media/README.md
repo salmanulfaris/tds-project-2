@@ -2,7 +2,7 @@
 
 #### 📦 Column(s) Available 
 
-`date`,`language`,`type`,`title`,`by`,`overall`,`quality`,`repeatability 
+`date`,`language`,`type`,`title`,`by`,`overall`,`quality`,`repeatability` 
 
 #### 🪫Column with missing Values 
 
@@ -12,119 +12,83 @@
 | by   | 262 |
 
 ## 💡Story
-### 🎥 Movie Dataset Insights 📊
+### 🎥 Movie Insights: A Statistical Journey Through Cinema 🍿
 
-In the fascinating world of cinema, our dataset showcases a vibrant selection of movies and series spanning multiple languages, directors, and genres. Let's dive into the data and unveil some insightful statistics and trends! 🌟
+In the vast universe of films and TV series, we embarked on an analysis of a dataset consisting of 2,652 entries, perfecting our understanding of diverse cinematic experiences. Let's delve into the rich tapestry of data, revealing intriguing trends and valuable insights! 🌍✨
 
-#### 📅 Time Trends:
-The dataset spans a total of **2,553** unique dates, with the earliest entry dating back to **21-May-06** and the most recent entry being **15-Nov-24**. Notably, **21-May-06** holds the record for the highest frequency of occurrences at **8** entries. 
+---
 
-#### 🌍 Language Diversity:
-The dataset comprises a diverse palette of **11 languages**, with the following counts:
+#### 🌟 Overview of the Dataset
 
-| **Language** | **Count** |
-|--------------|-----------|
-| English      | 1,306     |
-| Tamil        | 718       |
-| Telugu       | 338       |
-| Hindi        | 251       |
-| Malayalam    | 19        |
-| Japanese     | 12        |
-| Chinese      | 3         |
-| German       | 2         |
-| Spanish      | 1         |
-| Korean       | 1         |
-| French       | 1         |
+The dataset encompasses film productions spanning different languages, types, and ratings. Here’s a snapshot:
 
-📈 **Insight**: _English dominates the dataset, followed by Tamil and Telugu. This indicates a diverse cinematic reach, appealing to multiple audiences._
+| **Feature**         | **Count** | **Unique Values** | **Top Value**            | **Frequency** | **Mean**      | **Std Dev**   | **Min** | **Max** |
+|---------------------|-----------|--------------------|--------------------------|---------------|---------------|----------------|---------|---------|
+| **Date**            | 2,553     | 2055               | 21-May-06                | 8             | N/A           | N/A            | N/A     | N/A     |
+| **Language**        | 2,652     | 11                 | English                   | 1,306         | N/A           | N/A            | N/A     | N/A     |
+| **Type**            | 2,652     | 8                  | Movie                     | 2,211         | N/A           | N/A            | N/A     | N/A     |
+| **Title**           | 2,652     | 2,312              | Kanda Naal Mudhal        | 9             | N/A           | N/A            | N/A     | N/A     |
+| **Directed By**     | 2,390     | 1,528              | Kiefer Sutherland         | 48            | N/A           | N/A            | N/A     | N/A     |
+| **Overall Rating**  | 2,652     | N/A                | N/A                       | N/A           | 3.05          | 0.76           | 1       | 5       |
+| **Quality Rating**  | 2,652     | N/A                | N/A                       | N/A           | 3.21          | 0.80           | 1       | 5       |
+| **Repeatability**   | 2,652     | N/A                | N/A                       | N/A           | 1.49          | 0.60           | 1       | 3       |
 
-#### 🎬 Type of Content:
-The content is primarily categorized as **movies**, with **2,211** entries, while **196** belong to fiction, **112** to TV series, and so forth:
+---
 
-| **Type**       | **Count** |
-|----------------|-----------|
-| Movie          | 2,211     |
-| Fiction        | 196       |
-| TV Series      | 112       |
-| Non-Fiction    | 60        |
-| Video          | 42        |
-| Series         | 19        |
-| Script         | 8         |
-| Short          | 4         |
+#### 📊 Data Quality & Missing Values
 
-#### 🌟 Title Popularity:
-There are **2,312 unique titles** in the dataset, with the following title being the most frequently recorded:
+Before diving into analysis, we identified some missing pieces in our cinematic puzzle:
 
-- **Kanda Naal Mudhal**: 9 occurrences 🎉
+| **Feature**        | **Missing Values** |
+|--------------------|---------------------|
+| **Date**           | 99                  |
+| **Language**       | 0                   |
+| **Type**           | 0                   |
+| **Title**          | 0                   |
+| **Directed By**    | 262                 |
+| **Overall Rating** | 0                   |
+| **Quality Rating** | 0                   |
+| **Repeatability**  | 0                   |
 
-#### 🙌 Credits:
-The dataset features **1,528 unique creators**, with **Kiefer Sutherland** leading at **48** mentions. Here’s the breakdown:
+Missing values predominantly appeared in the *Date* and *Directed By* columns. 📅🗂️
 
-| **Creator**                        | **Count** |
-|------------------------------------|-----------|
-| Kiefer Sutherland                   | 48        |
-| Dean Cain, Teri Hatcher            | 21        |
-| Jeffrey Archer                      | 18        |
-| Brandon Sanderson                  | 18        |
-| Bruce Willis                       | 12        |
+---
 
-#### ⭐ Ratings Overview:
-Analyzing the ratings offered by viewers, we find an average **overall score** of **3.05**, with the scores distributed as follows:
+#### 🔍 Analysis of Ratings
 
-| **Overall Rating** | **Count** |
-|--------------------|-----------|
-| 1                  | 32        |
-| 2                  | 536       |
-| 3                  | 1,436     |
-| 4                  | 570       |
-| 5                  | 78        |
+The distribution of ratings helps us understand the viewer sentiments:
 
-#### 📉 Quality Ratings:
-The **quality** rating reflects a similar trend with an average score of **3.21**:
+- **Overall Ratings**: The average rating is approximately 3.05, indicating that most films maintain a satisfactory to good status.
+- **Quality Ratings**: An average of 3.21 suggests a slight inclination towards higher quality production values.
+- **Repeatability**: With a mean value of 1.49, viewers generally regard these films as enjoyable yet not necessarily worth repeating.
 
-| **Quality Rating** | **Count** |
-|--------------------|-----------|
-| 1                  | 24        |
-| 2                  | 433       |
-| 3                  | 1,276     |
-| 4                  | 802       |
-| 5                  | 117        |
+---
 
-#### 🔄 Repeatability:
-The **repeatability** scores indicate viewer engagement:
+#### 🤝 Correlation Observations
 
-| **Repeatability Rating** | **Count** |
-|--------------------------|-----------|
-| 1                        | 1,483     |
-| 2                        | 1,026     |
-| 3                        | 143       |
+Exploring relationships between different numerical ratings revealed interesting correlations:
 
-#### 📊 Correlation Matrix:
-The correlation between overall scores, quality, and repeatability hints at a more intricate relationship with viewers’ experiences:
+| **Feature**        | **Overall** | **Quality** | **Repeatability** |
+|--------------------|-------------|-------------|--------------------|
+| **Overall**        | 1.000       | 0.826       | 0.513              |
+| **Quality**        | 0.826       | 1.000       | 0.312              |
+| **Repeatability**   | 0.513       | 0.312       | 1.000              |
 
-| **Metrics**         | **Overall** | **Quality** | **Repeatability** |
-|---------------------|-------------|-------------|-------------------|
-| Overall             | 1.000       | 0.826       | 0.513             |
-| Quality             | 0.826       | 1.000       | 0.312             |
-| Repeatability       | 0.513       | 0.312       | 1.000             |
+The above correlation matrix illustrates that the quality ratings significantly influence overall ratings (0.83 correlation). This indicates that on average, films with higher quality ratings tend to receive better overall assessments from viewers. 📈
 
-#### 🚫 Missing Values:
-To note a couple of missing aspects, the dataset includes missing values as follows:
+---
 
-| **Field**      | **Missing Count** |
-|----------------|--------------------|
-| Date           | 99                 |
-| Language       | 0                  |
-| Type           | 0                  |
-| Title          | 0                 
+#### 🌍 Language and Genre Distribution
+
+The dataset predominantly features content in **English** (1,306 entries), followed by **Tamil** (718) and **Telugu** (338). Most of these entries are categorized as *movies* (2,211), revealing a strong penchant for feature films over other types like TV series or shorts. 🎬
 
 ### 🌉Visual Analysis 2.0 
-![count_movies_by_language.png](count_movies_by_language.png)
-![overall_vs_quality.png](overall_vs_quality.png)
-![repeatability_ratings_distribution.png](repeatability_ratings_distribution.png)
-![correlation_heatmap.png](correlation_heatmap.png)
-![overall_ratings_distribution.png](overall_ratings_distribution.png)
-![quality_ratings_distribution.png](quality_ratings_distribution.png)
+![rating_correlation_heatmap.png](ai-charts/rating_correlation_heatmap.png)
+![top_10_movies_by_title.png](ai-charts/top_10_movies_by_title.png)
+![repeatability_ratings_distribution.png](ai-charts/repeatability_ratings_distribution.png)
+![movies_by_language.png](ai-charts/movies_by_language.png)
+![overall_ratings_distribution.png](ai-charts/overall_ratings_distribution.png)
+![quality_ratings_distribution.png](ai-charts/quality_ratings_distribution.png)
 
 
 ### 🌉Visualizations of Distribution 

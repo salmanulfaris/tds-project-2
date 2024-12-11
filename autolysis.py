@@ -106,7 +106,7 @@ def generate_story(df, analysis_results, output_dir):
     visualisation_prompt = (
             common_data_for_prompt + "\n\n"
                                      "write code to generate visual analysis for an data. return only the python code,df is the variable which "
-                                     f"dataframe is present and plt is available as matplotlib and seaborn as sns and save those image to {output_dir}/ai-charts "
+                                     f"dataframe is present and plt is available as matplotlib and seaborn as sns and save those image to {output_dir} "
     )
     visualisation_code = send_text_to_llm(visualisation_prompt)
 
@@ -130,9 +130,9 @@ def generate_story(df, analysis_results, output_dir):
             f.write(story)
 
         f.write("\n\n### 🌉Visual Analysis 2.0 \n")
-        for img_file in os.listdir(output_dir + '/ai-charts'):
+        for img_file in os.listdir(output_dir):
             if img_file.endswith(".png"):
-                f.write(f"![{img_file}](ai-charts/{img_file})\n")
+                f.write(f"![{img_file}]({img_file})\n")
 
         f.write("\n\n### 🌉Visualizations of Distribution \n")
         for img_file in os.listdir(output_dir + '/static'):
@@ -153,7 +153,6 @@ def main():
     output_dir = os.path.splitext(input_file)[0]
     os.makedirs(output_dir, exist_ok=True)
     os.makedirs(output_dir + '/static', exist_ok=True)
-    os.makedirs(output_dir + '/ai-charts', exist_ok=True)
 
     try:
         df = pd.read_csv(input_file, encoding='latin-1')

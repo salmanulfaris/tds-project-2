@@ -118,11 +118,11 @@ In the kingdom of data, each piece of information belongs to a certain type:
 And thus, the tale of the book dataset concludes
 
 ### 🌉Visual Analysis 2.0 
-![ratings_count_distribution.png](ai-charts/ratings_count_distribution.png)
-![average_rating_vs_ratings_count.png](ai-charts/average_rating_vs_ratings_count.png)
-![top_authors.png](ai-charts/top_authors.png)
-![correlation_heatmap.png](ai-charts/correlation_heatmap.png)
-![average_rating_distribution.png](ai-charts/average_rating_distribution.png)
+![ratings_count_distribution.png](ratings_count_distribution.png)
+![average_rating_vs_ratings_count.png](average_rating_vs_ratings_count.png)
+![top_authors.png](top_authors.png)
+![correlation_heatmap.png](correlation_heatmap.png)
+![average_rating_distribution.png](average_rating_distribution.png)
 
 
 ### 🌉Visualizations of Distribution 

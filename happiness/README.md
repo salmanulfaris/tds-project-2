@@ -102,11 +102,11 @@ The correlation matrix reveals significant relationships within the data:
 As we continue to explore the world of happiness metrics, these insights can guide policymakers and communities in creating environments conducive to well-being. Together, let’s strive for a happier and more equitable world! 🌟🌈
 
 ### 🌉Visual Analysis 2.0 
-![correlation_matrix_heatmap.png](ai-charts/correlation_matrix_heatmap.png)
-![top_20_countries_life_ladder.png](ai-charts/top_20_countries_life_ladder.png)
-![life_ladder_distribution.png](ai-charts/life_ladder_distribution.png)
-![life_ladder_by_year.png](ai-charts/life_ladder_by_year.png)
-![pairplot_selected_features.png](ai-charts/pairplot_selected_features.png)
+![correlation_matrix_heatmap.png](correlation_matrix_heatmap.png)
+![top_20_countries_life_ladder.png](top_20_countries_life_ladder.png)
+![life_ladder_distribution.png](life_ladder_distribution.png)
+![life_ladder_by_year.png](life_ladder_by_year.png)
+![pairplot_selected_features.png](pairplot_selected_features.png)
 
 
 ### 🌉Visualizations of Distribution 

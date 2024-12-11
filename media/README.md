@@ -83,12 +83,12 @@ The above correlation matrix illustrates that the quality ratings significantly 
 The dataset predominantly features content in **English** (1,306 entries), followed by **Tamil** (718) and **Telugu** (338). Most of these entries are categorized as *movies* (2,211), revealing a strong penchant for feature films over other types like TV series or shorts. 🎬
 
 ### 🌉Visual Analysis 2.0 
-![rating_correlation_heatmap.png](ai-charts/rating_correlation_heatmap.png)
-![top_10_movies_by_title.png](ai-charts/top_10_movies_by_title.png)
-![repeatability_ratings_distribution.png](ai-charts/repeatability_ratings_distribution.png)
-![movies_by_language.png](ai-charts/movies_by_language.png)
-![overall_ratings_distribution.png](ai-charts/overall_ratings_distribution.png)
-![quality_ratings_distribution.png](ai-charts/quality_ratings_distribution.png)
+![rating_correlation_heatmap.png](rating_correlation_heatmap.png)
+![top_10_movies_by_title.png](top_10_movies_by_title.png)
+![repeatability_ratings_distribution.png](repeatability_ratings_distribution.png)
+![movies_by_language.png](movies_by_language.png)
+![overall_ratings_distribution.png](overall_ratings_distribution.png)
+![quality_ratings_distribution.png](quality_ratings_distribution.png)
 
 
 ### 🌉Visualizations of Distribution 

@@ -79,7 +79,13 @@ def visualize_data(df, correlation_matrix, output_dir):
         plt.savefig(output_path)
         plt.close()
 
-
+    # Correlation heatmap
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(correlation_matrix, annot=True, cmap="coolwarm", fmt=".2f")
+    plt.title("Correlation Matrix Heatmap")
+    output_path = os.path.join(output_dir, "correlation_heatmap.png")
+    plt.savefig(output_path)
+    plt.close()
 
 
 def generate_story(df, analysis_results, output_dir):

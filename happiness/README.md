@@ -110,13 +110,13 @@ As we continue to explore the world of happiness metrics, these insights can gui
 
 
 ### 🌉Visualizations of Distribution 
-![Positive affect_distribution.png](static/Positive affect_distribution.png)
-![Freedom to make life choices_distribution.png](static/Freedom to make life choices_distribution.png)
-![Perceptions of corruption_distribution.png](static/Perceptions of corruption_distribution.png)
+![Positive affect_distribution.png](static/Positive_affect_distribution.png)
+![Freedom to make life choices_distribution.png](static/Freedom_to_make_life_choices_distribution.png)
+![Perceptions of corruption_distribution.png](static/Perceptions_of_corruption_distribution.png)
 ![Generosity_distribution.png](static/Generosity_distribution.png)
-![Social support_distribution.png](static/Social support_distribution.png)
-![Life Ladder_distribution.png](static/Life Ladder_distribution.png)
+![Social support_distribution.png](static/Social_support_distribution.png)
+![Life Ladder_distribution.png](static/Life_Ladder_distribution.png)
 ![year_distribution.png](static/year_distribution.png)
-![Negative affect_distribution.png](static/Negative affect_distribution.png)
-![Log GDP per capita_distribution.png](static/Log GDP per capita_distribution.png)
-![Healthy life expectancy at birth_distribution.png](static/Healthy life expectancy at birth_distribution.png)
+![Negative affect_distribution.png](static/Negative_affect_distribution.png)
+![Log GDP per capita_distribution.png](static/Log_GDP_per_capita_distribution.png)
+![Healthy life expectancy at birth_distribution.png](static/Healthy_life_expectancy_at_birth_distribution.png)

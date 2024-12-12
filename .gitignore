@@ -1,7 +1,7 @@
 .idea/*
 */.DS_Store
 .DS_Store
-./goodreads.csv
-./happiness.csv
-./media.csv
-./prev/*
+goodreads.csv
+happiness.csv
+media.csv
+prev/*

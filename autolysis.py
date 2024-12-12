@@ -46,21 +46,21 @@ class AutomatedAnalysis:
         self.output_dir = None
 
         # Create output directory
-        self._create_output_directory()
+        # self._create_output_directory()
 
         # Load the CSV
         self._load_csv()
 
-    def _create_output_directory(self):
-        """
-        Create an output directory using the dataset filename
-        """
-        # Get the base filename without extension
-        base_filename = os.path.splitext(os.path.basename(self.csv_path))[0]
-
-        # Create directory
-        self.output_dir = os.path.join(os.getcwd(), f"{base_filename}")
-        os.makedirs(self.output_dir, exist_ok=True)
+    # def _create_output_directory(self):
+    #     """
+    #     Create an output directory using the dataset filename
+    #     """
+    #     # Get the base filename without extension
+    #     base_filename = os.path.splitext(os.path.basename(self.csv_path))[0]
+    #
+    #     # Create directory
+    #     self.output_dir = os.path.join(os.getcwd(), f"{base_filename}")
+    #     os.makedirs(self.output_dir, exist_ok=True)
 
     def _load_csv(self):
         """

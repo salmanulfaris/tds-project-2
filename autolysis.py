@@ -154,7 +154,7 @@ def visualize_data(df, output_dir):
     plt.tight_layout()
 
     # Generate the file path where the plot will be saved
-    output_path = os.path.join(output_dir, 'static', "all_distributions.png")
+    output_path = os.path.join(output_dir, "all_distributions.png")
 
     # Save the combined plot as a PNG file
     plt.savefig(output_path)
@@ -214,7 +214,7 @@ def generate_story(df, analysis_results, output_dir):
     # Generate a prompt to request the LLM to write code for visualizations and Most important EDA relevant for data available
     visualisation_prompt = (
             common_data_for_prompt + "\n\n"
-                                     f"Write code to generate visual analysis for a DataFrame. Return only the Python code. Assume 'df' is the variable holding the dataset, 'plt' is available as matplotlib, and 'sns' as seaborn. Save the images directory ./{output_dir} ."
+                                     f"Write code to generate visual analysis for a DataFrame. Return only the Python code. Assume 'df' is the variable holding the dataset, 'plt' is available as matplotlib, and 'sns' as seaborn. Save the images directory ./{output_dir}/static ."
     )
     # Send the prompt to the LLM to generate the visualization code
     visualisation_code = send_text_to_llm(visualisation_prompt)
@@ -255,13 +255,13 @@ def generate_story(df, analysis_results, output_dir):
         # Include generated visualizations (if any)
         for img_file in os.listdir(output_dir):
             if img_file.endswith(".png"):
-                f.write(f"![{img_file}]({img_file.replace(' ', '_')})\n")
+                f.write(f"![{img_file}](static/{img_file.replace(' ', '_')})\n")
 
         # Add section for visualizations of distributions from the 'static' folder
         f.write("\n\n### 🌉 Visualizations of Distribution \n")
-        for img_file in os.listdir(output_dir + '/static'):
+        for img_file in os.listdir(output_dir):
             if img_file.endswith(".png"):
-                f.write(f"![{img_file}](static/{img_file.replace(' ', '_')})\n")
+                f.write(f"![{img_file}]({img_file.replace(' ', '_')})\n")
 
 
 def main():

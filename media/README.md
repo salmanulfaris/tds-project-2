@@ -1,97 +1,112 @@
-# 🤖Automated Analysis Report
+# 🤖 Automated Analysis Report
 
 #### 📦 Column(s) Available 
 
 `date`,`language`,`type`,`title`,`by`,`overall`,`quality`,`repeatability` 
 
-#### 🪫Column with missing Values 
+#### 🪫 Column(s) with Missing Values 
 
 |      |   0 |
 |:-----|----:|
 | date |  99 |
 | by   | 262 |
 
-## 💡Story
-### 🎥 Movie Insights: A Statistical Journey Through Cinema 🍿
+## 💡 Story
+### 🎬 Dive into the Dataset: A Cinematic Journey 📊
 
-In the vast universe of films and TV series, we embarked on an analysis of a dataset consisting of 2,652 entries, perfecting our understanding of diverse cinematic experiences. Let's delve into the rich tapestry of data, revealing intriguing trends and valuable insights! 🌍✨
-
----
-
-#### 🌟 Overview of the Dataset
-
-The dataset encompasses film productions spanning different languages, types, and ratings. Here’s a snapshot:
-
-| **Feature**         | **Count** | **Unique Values** | **Top Value**            | **Frequency** | **Mean**      | **Std Dev**   | **Min** | **Max** |
-|---------------------|-----------|--------------------|--------------------------|---------------|---------------|----------------|---------|---------|
-| **Date**            | 2,553     | 2055               | 21-May-06                | 8             | N/A           | N/A            | N/A     | N/A     |
-| **Language**        | 2,652     | 11                 | English                   | 1,306         | N/A           | N/A            | N/A     | N/A     |
-| **Type**            | 2,652     | 8                  | Movie                     | 2,211         | N/A           | N/A            | N/A     | N/A     |
-| **Title**           | 2,652     | 2,312              | Kanda Naal Mudhal        | 9             | N/A           | N/A            | N/A     | N/A     |
-| **Directed By**     | 2,390     | 1,528              | Kiefer Sutherland         | 48            | N/A           | N/A            | N/A     | N/A     |
-| **Overall Rating**  | 2,652     | N/A                | N/A                       | N/A           | 3.05          | 0.76           | 1       | 5       |
-| **Quality Rating**  | 2,652     | N/A                | N/A                       | N/A           | 3.21          | 0.80           | 1       | 5       |
-| **Repeatability**   | 2,652     | N/A                | N/A                       | N/A           | 1.49          | 0.60           | 1       | 3       |
+Welcome to our exploration of a fascinating movie dataset, where we dissect various films based on their release dates, languages, genres, and critical reception! Let's unravel the data and uncover some exciting insights. 🍿
 
 ---
 
-#### 📊 Data Quality & Missing Values
+#### 🗓️ Summary of the Dataset
 
-Before diving into analysis, we identified some missing pieces in our cinematic puzzle:
+Our dataset consists of **2,652 entries** that encompass a wide array of movies primarily in **English**, **Tamil**, and **Telugu**. The films are categorized into different types, all showcasing vibrant storytelling and outstanding performances.
 
-| **Feature**        | **Missing Values** |
-|--------------------|---------------------|
-| **Date**           | 99                  |
-| **Language**       | 0                   |
-| **Type**           | 0                   |
-| **Title**          | 0                   |
-| **Directed By**    | 262                 |
-| **Overall Rating** | 0                   |
-| **Quality Rating** | 0                   |
-| **Repeatability**  | 0                   |
+#### 🌍 Language Breakdown
 
-Missing values predominantly appeared in the *Date* and *Directed By* columns. 📅🗂️
+Here’s a peek at the languages represented in our dataset:
 
----
+| Language      | Count |
+|---------------|-------|
+| English       | 1,306 |
+| Tamil         | 718   |
+| Telugu        | 338   |
+| Hindi         | 251   |
+| Malayalam     | 19    |
+| Japanese      | 12    |
+| Chinese       | 3     |
+| German        | 2     |
+| Spanish       | 1     |
+| Korean        | 1     |
+| French        | 1     |
 
-#### 🔍 Analysis of Ratings
-
-The distribution of ratings helps us understand the viewer sentiments:
-
-- **Overall Ratings**: The average rating is approximately 3.05, indicating that most films maintain a satisfactory to good status.
-- **Quality Ratings**: An average of 3.21 suggests a slight inclination towards higher quality production values.
-- **Repeatability**: With a mean value of 1.49, viewers generally regard these films as enjoyable yet not necessarily worth repeating.
+**English** takes the lead with a whopping **1,306 films**, followed by **Tamil** and **Telugu**! 🎥
 
 ---
 
-#### 🤝 Correlation Observations
+#### 📊 Summary Statistics
 
-Exploring relationships between different numerical ratings revealed interesting correlations:
+A glance at the average ratings reveals some intriguing trends:
 
-| **Feature**        | **Overall** | **Quality** | **Repeatability** |
-|--------------------|-------------|-------------|--------------------|
-| **Overall**        | 1.000       | 0.826       | 0.513              |
-| **Quality**        | 0.826       | 1.000       | 0.312              |
-| **Repeatability**   | 0.513       | 0.312       | 1.000              |
+| Measure        | Mean | Std. Dev. | Min | 25% | Median | 75% | Max |
+|----------------|------|-----------|-----|-----|--------|-----|-----|
+| Overall Rating | 3.05 | 0.76      | 1   | 3   | 3      | 3   | 5   |
+| Quality Rating | 3.21 | 0.80      | 1   | 3   | 3      | 4   | 5   |
+| Repeatability  | 1.49 | 0.60      | 1   | 1   | 1      | 2   | 3   |
 
-The above correlation matrix illustrates that the quality ratings significantly influence overall ratings (0.83 correlation). This indicates that on average, films with higher quality ratings tend to receive better overall assessments from viewers. 📈
+The average overall rating stands at approximately **3.05** while quality rating is slightly higher at **3.21**. 🎭
 
 ---
 
-#### 🌍 Language and Genre Distribution
+#### 📈 Correlation Insights
 
-The dataset predominantly features content in **English** (1,306 entries), followed by **Tamil** (718) and **Telugu** (338). Most of these entries are categorized as *movies* (2,211), revealing a strong penchant for feature films over other types like TV series or shorts. 🎬
+Examining the correlation matrix unveils relationships between ratings:
 
-### 🌉Visual Analysis 2.0 
-![rating_correlation_heatmap.png](rating_correlation_heatmap.png)
-![top_10_movies_by_title.png](top_10_movies_by_title.png)
-![repeatability_ratings_distribution.png](repeatability_ratings_distribution.png)
-![movies_by_language.png](movies_by_language.png)
-![overall_ratings_distribution.png](overall_ratings_distribution.png)
-![quality_ratings_distribution.png](quality_ratings_distribution.png)
+| Overall | Quality | Repeatability |
+|---------|---------|---------------|
+| 1.000   | 0.826   | 0.513         |
+| 0.826   | 1.000   | 0.312         |
+| 0.513   | 0.312   | 1.000         |
+
+There is a **strong correlation** (0.83) between overall rating and quality, suggesting that higher quality typically leads to more favorable overall ratings! 🌟
+
+---
+
+#### ❓ Missing Values
+
+Understanding where data is missing is crucial for clean analyses. Here’s the rundown on the missing values:
+
+| Column      | Missing Values |
+|-------------|----------------|
+| Date        | 99             |
+| Language    | 0              |
+| Type        | 0              |
+| Title       | 0              |
+| By          | 262            |
+| Overall     | 0              |
+| Quality     | 0              |
+| Repeatability| 0              |
+
+The **'By'** column has the most missing entries, indicating that in **262** cases, the creator or contributors are not specified. 🧐
+
+---
+
+#### 🎥 Final Thoughts
+
+This dataset serves as a goldmine for movie enthusiasts and analysts alike! With insights into ratings, language popularity, and trends, we have a clearer picture of what resonates with audiences. 🎬 
+
+Using these insights, filmmakers and marketers can strategically choose titles, collaborations, and even marketing approaches based on demographic preferences and historical successes! 
+
+Ready for your next cinematic adventure? 🌟🍂
+
+### 🌉 Visual Analysis 2.0 
+![repeatability_count.png](repeatability_count.png)
+![correlation_matrix.png](correlation_matrix.png)
+![quality_by_language.png](quality_by_language.png)
+![overall_ratings_count.png](overall_ratings_count.png)
+![language_count.png](language_count.png)
+![average_quality_by_overall.png](average_quality_by_overall.png)
 
 
-### 🌉Visualizations of Distribution 
-![repeatability_distribution.png](static/repeatability_distribution.png)
-![overall_distribution.png](static/overall_distribution.png)
-![quality_distribution.png](static/quality_distribution.png)
+### 🌉 Visualizations of Distribution 
+![all_distributions.png](static/all_distributions.png)

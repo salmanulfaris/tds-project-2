@@ -237,7 +237,7 @@ class AutomatedAnalysis:
             plt.ylabel('Cumulative Explained Variance')
 
         # Save main visualizations
-        main_viz_path = os.path.join(self.output_dir, 'analysis_visualizations.png')
+        main_viz_path = os.path.join('analysis_visualizations.png')
         plt.savefig(main_viz_path, dpi=300, bbox_inches='tight')
         plt.close()
 
@@ -247,7 +247,7 @@ class AutomatedAnalysis:
         plt.suptitle('Pairwise Distribution and Relationships', y=1.02)
 
         # Save pairplot
-        pairplot_path = os.path.join(self.output_dir, 'distribution_pairplot.png')
+        pairplot_path = os.path.join('distribution_pairplot.png')
         plt.savefig(pairplot_path, dpi=300, bbox_inches='tight')
         plt.close()
 
@@ -374,7 +374,7 @@ class AutomatedAnalysis:
         narrative = self.generate_narrative(tables, viz_paths)
 
         # Save narrative to README.md in the output directory
-        readme_path = os.path.join(self.output_dir, 'README.md')
+        readme_path = os.path.join('README.md')
         with open(readme_path, 'w') as f:
             f.write(narrative)
 

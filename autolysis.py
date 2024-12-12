@@ -1,292 +1,409 @@
 # /// script
 # requires-python = ">=3.11"
 # dependencies = [
-#     "pandas",
-#     "matplotlib",
-#     "seaborn",
-#     "httpx",
-#     "tabulate",
-#     "python-dotenv",
+#   "httpx",
+#   "pandas",
+#   "numpy",
+#   "seaborn",
+#   "matplotlib",
+#   "scikit-learn"
 # ]
 # ///
 
 import os
 import sys
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
+import json
 import httpx
-from dotenv import load_dotenv
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from typing import Dict, Any, List
 
-load_dotenv()
-# Grouped global constants for API Call to LLM
-API_CONFIG = {
-    "LLM_ENDPOINT": "http://aiproxy.sanand.workers.dev/openai/v1/chat/completions",
-    "AIPROXY_TOKEN": os.getenv("AIPROXY_TOKEN")
-}
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
+from sklearn.feature_selection import mutual_info_regression
+from sklearn.pipeline import Pipeline
 
-if not API_CONFIG['AIPROXY_TOKEN']:
-    print("Error: AIPROXY_TOKEN environment variable is not set.")
-    sys.exit(1)
+sns.set_theme(style="whitegrid")
 
+class AutomatedAnalysis:
+    def __init__(self, csv_path: str, aiproxy_token: str):
+        """
+        Initialize the automated analysis class
 
-# Function for sending text to LLM
-def send_text_to_llm(prompt, max_tokens=1000):
-    headers = {"Authorization": f"Bearer {API_CONFIG['AIPROXY_TOKEN']}"}
-    data = {
-        "model": "gpt-4o-mini",
-        "messages": [{"role": "user", "content": prompt}],
-        "max_tokens": max_tokens,
-    }
-    try:
-        response = httpx.post(API_CONFIG['LLM_ENDPOINT'], json=data, headers=headers, timeout=40)
-        print(response.json())
-        response.raise_for_status()
-        return response.json()["choices"][0]["message"]["content"]
-    except Exception as e:
-        print(f"Error communicating with LLM: {e}")
-        return None
+        Args:
+            csv_path (str): Path to the input CSV file
+            aiproxy_token (str): AI Proxy authentication token
+        """
+        self.csv_path = csv_path
+        self.aiproxy_token = aiproxy_token
+        self.df = None
+        self.analysis_results = {}
+        self.output_dir = None
 
+        # Create output directory
+        self._create_output_directory()
 
-def analyze_data(df):
-    """
-    Analyzes a DataFrame and returns a dictionary containing various statistical and structural insights.
+        # Load the CSV
+        self._load_csv()
 
-    Parameters:
-    df (pandas.DataFrame): The DataFrame to be analyzed.
+    def _create_output_directory(self):
+        """
+        Create an output directory using the dataset filename
+        """
+        # Get the base filename without extension
+        base_filename = os.path.splitext(os.path.basename(self.csv_path))[0]
 
-    Returns:
-    dict: A dictionary containing the following information:
-        - 'columns': Information about the DataFrame's columns (data types, non-null counts, etc.).
-        - 'column_names': A list of the DataFrame's column names.
-        - 'values_counts': A dictionary where each key is a column name and each value is the count of unique values in that column.
-        - 'unique_values': A dictionary where each key is a column name and each value is an array of unique values in that column.
-        - 'summary_stats': A DataFrame containing summary statistics for each column (e.g., mean, std, min, max).
-        - 'missing_values': A Series with the count of missing (NaN) values for each column.
-        - 'correlation_matrix': A DataFrame showing correlation coefficients between numeric columns.
+        # Create directory
+        self.output_dir = os.path.join(os.getcwd(), f"{base_filename}")
+        os.makedirs(self.output_dir, exist_ok=True)
 
-    This function provides a comprehensive overview of the DataFrame's structure, distributions, and relationships.
-
-    Example:
-        result = analyze_data(df)
-        print(result["summary_stats"])  # Print summary statistics of the DataFrame
-    """
-
-    # Generate summary statistics for all columns (numerical and categorical)
-    summary_stats = df.describe(include="all").transpose()
-
-    # Count the missing values in each column
-    missing_values = df.isnull().sum()
-
-    # Generate the correlation matrix for numeric columns
-    correlation_matrix = df.corr(numeric_only=True)
-
-    # Initialize dictionaries to store value counts and unique values for each column
-    values_counts = {}
-    unique_values = {}
-
-    # Loop through each column in the DataFrame to get value counts and unique values
-    for col in df.columns:
-        values_counts[col] = df[col].value_counts()  # Store counts of unique values for each column
-        unique_values[col] = df[col].unique()  # Store unique values for each column
-
-    # Return a dictionary containing all the collected insights
-    return {
-        "columns": df.info(),  # Information about the DataFrame's columns (including types and non-null counts)
-        "column_names": df.columns,  # List of column names
-        "values_counts": values_counts,  # Dictionary of value counts per column
-        "unique_values": unique_values,  # Dictionary of unique values per column
-        "summary_stats": summary_stats,  # Summary statistics for all columns
-        "missing_values": missing_values,  # Missing values count for each column
-        "correlation_matrix": correlation_matrix,  # Correlation matrix for numeric columns
-    }
-
-
-def visualize_data(df, output_dir):
-    """
-    Generates histograms for numeric columns in the given DataFrame and saves them as PNG images.
-
-    Parameters:
-    df (pandas.DataFrame): The DataFrame containing the data to be visualized.
-    output_dir (str): The directory where the output images will be saved.
-
-    This function iterates through all numeric columns in the DataFrame, generates a histogram (with KDE)
-    for each column, and saves the resulting plot as a PNG file in the specified output directory.
-
-    The saved images will be stored under a subdirectory 'static' within the given `output_dir`.
-
-    Example:
-        visualize_data(df, "/path/to/save/plots")
-    """
-
-    # Select numeric columns in the DataFrame
-    numeric_cols = df.select_dtypes(include="number").columns
-
-    # Iterate over each numeric column to generate and save the plot
-    sns.set_palette("tab10")
-
-    # Create a figure with a grid of subplots
-    num_cols = len(numeric_cols)
-    n_rows = (num_cols // 3) + (num_cols % 3 > 0)  # Adjust the number of rows based on the number of columns
-    n_cols = 3  # You can change this to suit the number of columns per row
-
-    # Create a single figure with subplots
-    fig, axes = plt.subplots(n_rows, n_cols, figsize=(15, 5 * n_rows))
-
-    # Flatten axes array for easier iteration (in case of multi-dimensional grid)
-    axes = axes.flatten()
-
-    # Iterate over numeric columns and plot on each subplot
-    for i, col in enumerate(numeric_cols):
-        # Plot a histogram with a Kernel Density Estimate (KDE) for the current column
-        sns.histplot(df[col].dropna(), kde=True, ax=axes[i])
-
-        # Set the title and axis labels for the plot
-        axes[i].set_title(f"Distribution of {col}")
-        axes[i].set_xlabel(col)
-        axes[i].set_ylabel("Frequency")
-
-    # Remove any unused subplots (in case the number of columns isn't a perfect multiple of 3)
-    for j in range(i + 1, len(axes)):
-        axes[j].axis('off')
-
-    # Adjust layout for better spacing between subplots
-    plt.tight_layout()
-
-    # Generate the file path where the plot will be saved
-    output_path = os.path.join(output_dir, "all_distributions.png")
-
-    # Save the combined plot as a PNG file
-    plt.savefig(output_path)
-
-    # Close the plot to avoid memory issues
-    plt.close()
-
-
-def generate_story(df, analysis_results, output_dir):
-    """
-    Generates an analysis story, visualizations, and a report for a given DataFrame.
-
-    Parameters:
-    df (pandas.DataFrame): The dataset to analyze.
-    analysis_results (dict): The results of previous data analysis containing various statistics and data insights.
-    output_dir (str): The directory where the analysis results, visualizations, and README will be saved.
-
-    This function creates a comprehensive analysis report by:
-    - Sending a prompt to a language model (LLM) to generate a story summarizing the data.
-    - Requesting code from the LLM to create visualizations of the data.
-    - Executing the visual code and saving the visualizations as image files.
-    - Writing the analysis, story, and visualizations into a markdown README file.
-
-    Example:
-        generate_story(df, analysis_results, "/path/to/output")
-    """
-
-    # Prepare a common summary of the dataset, including:
-    # - First 5 rows of the DataFrame
-    # - Summary statistics
-    # - Column information (types, non-null counts, etc.)
-    # - Value counts and unique values for each column
-    # - Missing values and correlation matrix
-    common_data_for_prompt = ("Here is the summary of a dataset:\n\n"
-                              f"{df.head(5).to_string(index=False)}\n\n"
-                              "Summary Statistics:\n"
-                              f"{analysis_results['summary_stats'].to_string()}\n\n"
-                              "Column summary \n"
-                              f"{analysis_results['columns']}\n\n"
-                              "Values counts \n"
-                              f"{analysis_results['values_counts']}\n\n"
-                              "Unique Values \n"
-                              f"{analysis_results['unique_values']}\n\n"
-                              "Missing Values:\n"
-                              f"{analysis_results['missing_values'].to_string()}\n\n"
-                              "Correlation Matrix:\n"
-                              f"{analysis_results['correlation_matrix'].to_string()}\n\n")
-
-    # Generate a prompt to request the LLM to create a story summarizing the data
-    summary_prompt = (
-            common_data_for_prompt + "\n\n"
-                                     "Write a story summarizing the data, analysis, and potential insights and tabular infos about missing values, data types (if any). Use emoji in the content to make it more stylish and readable."
-    )
-    # Send the prompt to the LLM to generate a story
-    story = send_text_to_llm(summary_prompt)
-
-    # Generate a prompt to request the LLM to write code for visualizations and Most important EDA relevant for data available
-    visualisation_prompt = (
-            common_data_for_prompt + "\n\n"
-                                     f"Write code to generate visual analysis for a DataFrame. Return only the Python code. Assume 'df' is the variable holding the dataset, 'plt' is available as matplotlib, and 'sns' as seaborn. Save the images directory ./{output_dir}/static ."
-    )
-    # Send the prompt to the LLM to generate the visualization code
-    visualisation_code = send_text_to_llm(visualisation_prompt)
-
-    # If visualization code was generated successfully, clean and execute it
-    if visualisation_code:
-        # Clean the code by removing code block formatting and fixing dataframe correlation function
-        visualisation_code = visualisation_code.replace("```python\n", "").replace("```", "").replace("df.corr()",
-                                                                                                      "df.corr(numeric_only=True)")
+    def _load_csv(self):
+        """
+        Load the CSV file and perform initial preprocessing
+        """
         try:
-            # Execute the visualization code and necessary EDA Code from LLM
-            exec(visualisation_code)
+            self.df = pd.read_csv(self.csv_path, encoding='latin-1')
+            # Remove leading/trailing whitespaces from column names
+            self.df.columns = self.df.columns.str.strip()
         except Exception as e:
-            # Log any errors that occur while executing the visualization code
-            print(f"AI Visualization code failed, {e}")
+            print(f"Error loading CSV: {e}")
+            sys.exit(1)
 
-    # Write the analysis results and generated content to a README markdown file
-    with open(os.path.join(output_dir, "README.md"), "w") as f:
-        # Start the report with a title and an overview
-        f.write("# 🤖 Automated Analysis Report\n\n")
+    def _call_llm(self, messages: List[Dict[str, str]], max_tokens: int = 1000) -> str:
+        """
+        Call the LLM endpoint with given messages
 
-        # Write the list of columns available in the dataset
-        f.write("#### 📦 Column(s) Available \n\n")
-        f.write(f"`{'`,`'.join(analysis_results['column_names'].to_list())}` \n\n")
+        Args:
+            messages (List[Dict]): List of message dictionaries
+            max_tokens (int): Maximum tokens to generate
 
-        # Write the columns that have missing values
-        f.write("#### 🪫 Column(s) with Missing Values \n\n")
-        f.write(analysis_results['missing_values'][analysis_results['missing_values'] > 0].to_markdown())
-        f.write("\n\n")
+        Returns:
+            str: LLM response
+        """
+        endpoint = "http://aiproxy.sanand.workers.dev/openai/v1/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {self.aiproxy_token}",
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "model": "gpt-4o-mini",
+            "messages": messages,
+            "max_tokens": max_tokens
+        }
 
-        # If the story was generated, write it in the README
-        if story:
-            f.write("## 💡 Story\n")
-            f.write(story)
+        try:
+            with httpx.Client() as client:
+                response = client.post(endpoint, headers=headers, timeout=30, json=payload)
+                print(response.json())
+                response.raise_for_status()
+                return response.json()['choices'][0]['message']['content']
+        except Exception as e:
+            print(f"LLM API call error: {e}")
+            return ""
 
-        # Add a section for visual analysis
-        f.write("\n\n### 🌉 Visual Analysis 2.0 \n")
-        # Include generated visualizations (if any)
-        for img_file in os.listdir(output_dir):
-            if img_file.endswith(".png"):
-                f.write(f"![{img_file}](static/{img_file.replace(' ', '_')})\n")
+    def data_summary(self) -> Dict[str, Any]:
+        """
+        Generate a comprehensive data summary
 
-        # Add section for visualizations of distributions from the 'static' folder
-        f.write("\n\n### 🌉 Visualizations of Distribution \n")
-        for img_file in os.listdir(output_dir):
-            if img_file.endswith(".png"):
-                f.write(f"![{img_file}]({img_file.replace(' ', '_')})\n")
+        Returns:
+            Dict: Summary of the dataset
+        """
+        summary = {
+            "total_rows": len(self.df),
+            "total_columns": len(self.df.columns),
+            "column_types": dict(self.df.dtypes),
+            "missing_values": self.df.isnull().sum().to_dict(),
+            "descriptive_stats": self.df.describe().to_dict()
+        }
+        return summary
+
+    def feature_importance(self) -> Dict[str, float]:
+        """
+        Calculate feature importance using mutual information
+
+        Returns:
+            Dict: Feature importance scores
+        """
+        # Prepare numeric columns
+        numeric_cols = self.df.select_dtypes(include=['float64', 'int64']).columns
+        new_data = self.df[numeric_cols].dropna()
+        if len(new_data.columns) < 2:
+            return {}
+
+        # Assume the last column is the target variable
+        X = new_data.iloc[:, :-1]
+        y = new_data.iloc[:, -1]
+
+        # Calculate mutual information
+        mi_scores = mutual_info_regression(X, y)
+        importance = dict(zip(X.columns, mi_scores))
+        return importance
+
+    def correlation_analysis(self) -> np.ndarray:
+        """
+        Perform correlation analysis
+
+        Returns:
+            np.ndarray: Correlation matrix
+        """
+        numeric_cols = self.df.select_dtypes(include=['float64', 'int64']).columns
+        correlation_matrix = self.df[numeric_cols].corr()
+        return correlation_matrix
+
+    def cluster_analysis(self, n_clusters: int = 3) -> Dict[str, Any]:
+        """
+        Perform cluster analysis using K-means
+
+        Args:
+            n_clusters (int): Number of clusters to create
+
+        Returns:
+            Dict: Cluster analysis results
+        """
+        numeric_cols = self.df.select_dtypes(include=['float64', 'int64']).columns
+
+        if len(numeric_cols) < 2:
+            return {}
+
+        # Standardize the features
+        scaler = Pipeline([
+            ('imp', SimpleImputer(missing_values=np.nan, strategy='mean')),
+            ('scaler', StandardScaler()),
+        ])
+
+        X_scaled = scaler.fit_transform(self.df[numeric_cols])
+
+        # Perform K-means clustering
+        kmeans = KMeans(n_clusters=n_clusters, random_state=42)
+        cluster_labels = kmeans.fit_predict(X_scaled)
+
+        return {
+            "cluster_centers": kmeans.cluster_centers_,
+            "cluster_labels": cluster_labels,
+            "inertia": kmeans.inertia_
+        }
+
+    def create_visualizations(self):
+        """
+        Create multiple comprehensive visualizations based on the analysis
+        """
+        # 1. Main Analysis Visualization
+        plt.figure(figsize=(20, 15))
+        plt.subplots_adjust(hspace=0.5, wspace=0.3)
+
+        # Correlation Heatmap
+        plt.subplot(2, 2, 1)
+        corr_matrix = self.correlation_analysis()
+        sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', center=0,
+                    square=True, linewidths=0.5, cbar_kws={"shrink": .8})
+        plt.title('Correlation Heatmap', fontsize=10)
+        plt.tight_layout()
+
+        # Feature Importance Bar Plot
+        plt.subplot(2, 2, 2)
+        feature_imp = self.feature_importance()
+        if feature_imp:
+            plt.bar(feature_imp.keys(), feature_imp.values())
+            plt.title('Feature Importance', fontsize=10)
+            plt.xticks(rotation=45, ha='right')
+            plt.tight_layout()
+
+        # Distribution Boxplot
+        plt.subplot(2, 2, 3)
+        numeric_cols = self.df.select_dtypes(include=['float64', 'int64']).columns
+        if len(numeric_cols) > 0:
+            sns.boxplot(data=self.df[numeric_cols])
+            plt.title('Distribution of Numeric Features', fontsize=10)
+            plt.xticks(rotation=45, ha='right')
+            plt.tight_layout()
+
+        # PCA Variance Explained
+        plt.subplot(2, 2, 4)
+        if len(numeric_cols) > 1:
+            pca = PCA()
+            scaler = Pipeline([
+                ('imp', SimpleImputer(missing_values=np.nan, strategy='mean')),
+                ('scaler', StandardScaler()),
+            ])
+            pca.fit(scaler.fit_transform(self.df[numeric_cols]))
+            plt.plot(np.cumsum(pca.explained_variance_ratio_))
+            plt.title('PCA Variance Explained', fontsize=10)
+            plt.xlabel('Number of Components')
+            plt.ylabel('Cumulative Explained Variance')
+
+        # Save main visualizations
+        main_viz_path = os.path.join(self.output_dir, 'analysis_visualizations.png')
+        plt.savefig(main_viz_path, dpi=300, bbox_inches='tight')
+        plt.close()
+
+        # 2. Distribution Pairplot
+        plt.figure(figsize=(15, 10))
+        sns.pairplot(self.df[numeric_cols], diag_kind='kde')
+        plt.suptitle('Pairwise Distribution and Relationships', y=1.02)
+
+        # Save pairplot
+        pairplot_path = os.path.join(self.output_dir, 'distribution_pairplot.png')
+        plt.savefig(pairplot_path, dpi=300, bbox_inches='tight')
+        plt.close()
+
+        return {
+            'main_viz': main_viz_path,
+            'pairplot': pairplot_path
+        }
+
+    def generate_markdown_tables(self) -> Dict[str, str]:
+        """
+        Generate markdown tables for different analyses
+
+        Returns:
+            Dict: Markdown formatted tables
+        """
+        tables = {}
+
+        # 1. Descriptive Statistics Table
+        desc_stats = self.df.describe()
+        desc_table = "| Statistic | " + " | ".join(desc_stats.columns) + " |\n"
+        desc_table += "|" + "|".join(["---"] * (len(desc_stats.columns) + 1)) + "|\n"
+        for index, row in desc_stats.iterrows():
+            desc_table += f"| {index} | " + " | ".join([f"{val:.2f}" for val in row]) + " |\n"
+        tables['descriptive_stats'] = desc_table
+
+        # 2. Feature Importance Table
+        feature_imp = self.feature_importance()
+        if feature_imp:
+            imp_table = "| Feature | Importance |\n|---|---|\n"
+            for feature, importance in sorted(feature_imp.items(), key=lambda x: x[1], reverse=True):
+                imp_table += f"| {feature} | {importance:.4f} |\n"
+            tables['feature_importance'] = imp_table
+
+        # 3. Correlation Table
+        corr_matrix = self.correlation_analysis()
+        corr_table = "| Feature | " + " | ".join(corr_matrix.columns) + " |\n"
+        corr_table += "|" + "|".join(["---"] * (len(corr_matrix.columns) + 1)) + "|\n"
+        for index, row in corr_matrix.iterrows():
+            corr_table += f"| {index} | " + " | ".join([f"{val:.2f}" for val in row]) + " |\n"
+        tables['correlation'] = corr_table
+
+        return tables
+
+    def generate_narrative(self, tables: Dict[str, str], viz_paths: Dict[str, str]) -> str:
+        """
+        Generate a narrative markdown report
+
+        Args:
+            tables (Dict[str, str]): Markdown tables to include in the narrative
+            viz_paths (Dict[str, str]): Paths to visualization files
+
+        Returns:
+            str: Markdown formatted narrative
+        """
+        # Prepare context for LLM
+        context = f"""
+        Dataset Information:
+        - Total Rows: {len(self.df)}
+        - Total Columns: {len(self.df.columns)}
+        - Column Types: {dict(self.df.dtypes)}
+
+        Missing Values:
+        {self.df.isnull().sum()}
+
+        Descriptive Statistics:
+        {tables.get('descriptive_stats', 'No descriptive stats available')}
+
+        Feature Importance:
+        {tables.get('feature_importance', 'No feature importance available')}
+        """
+
+        # Call LLM to generate narrative
+        messages = [
+            {"role": "system",
+             "content": "You are a data storyteller. Help create an engaging narrative about a dataset."},
+            {"role": "user",
+             "content": f"Create a compelling markdown story about this dataset. Include sections on data description, key insights, and potential implications. Context:\n{context}"}
+        ]
+
+        narrative = self._call_llm(messages, max_tokens=1500)
+
+        # Append visualizations
+        narrative += "\n\n## Visualizations\n\n"
+
+        # Add main visualization
+        if viz_paths.get('main_viz'):
+            narrative += f"### Analysis Visualizations\n"
+            narrative += f"![Analysis Visualizations](analysis_visualizations.png)\n\n"
+
+        # Add pairplot
+        if viz_paths.get('pairplot'):
+            narrative += f"### Pairwise Distribution\n"
+            narrative += f"![Pairwise Distribution](distribution_pairplot.png)\n\n"
+
+        # Append tables to the narrative
+        narrative += "\n## Descriptive Statistics\n\n"
+        narrative += tables.get('descriptive_stats', 'No descriptive stats available')
+
+        narrative += "\n## Feature Importance\n\n"
+        narrative += tables.get('feature_importance', 'No feature importance available')
+
+        narrative += "\n## Correlation Matrix\n\n"
+        narrative += tables.get('correlation', 'No correlation data available')
+
+        return narrative
+
+    def run_analysis(self):
+        """
+        Run complete analysis workflow
+        """
+        # Perform analyses
+        summary = self.data_summary()
+        feature_imp = self.feature_importance()
+        correlation = self.correlation_analysis()
+        clusters = self.cluster_analysis()
+
+        # Create visualizations
+        viz_paths = self.create_visualizations()
+
+        # Generate markdown tables
+        tables = self.generate_markdown_tables()
+
+        # Generate narrative
+        narrative = self.generate_narrative(tables, viz_paths)
+
+        # Save narrative to README.md in the output directory
+        readme_path = os.path.join(self.output_dir, 'README.md')
+        with open(readme_path, 'w') as f:
+            f.write(narrative)
+
+        return {
+            "summary": summary,
+            "feature_importance": feature_imp,
+            "correlation": correlation,
+            "clusters": clusters
+        }
 
 
 def main():
-    if len(sys.argv) != 2:
-        print("Usage: uv run autolysis.py <dataset.csv>")
+    # Check if CSV file is provided
+    if len(sys.argv) < 2:
+        print("Usage: python autolysis.py <csv_file>")
         sys.exit(1)
 
-    input_file = sys.argv[1]
-    if not os.path.isfile(input_file):
-        print(f"Error: File '{input_file}' not found.")
+    # Get CSV path and AI Proxy token
+    csv_path = sys.argv[1]
+    aiproxy_token = os.environ.get("AIPROXY_TOKEN")
+
+    if not aiproxy_token:
+        print("AIPROXY_TOKEN environment variable not set")
         sys.exit(1)
 
-    output_dir = os.path.splitext(input_file)[0]
-    os.makedirs(output_dir, exist_ok=True)
-    os.makedirs(output_dir + '/static', exist_ok=True)
+    # Run analysis
+    analyzer = AutomatedAnalysis(csv_path, aiproxy_token)
+    analyzer.run_analysis()
 
-    try:
-        df = pd.read_csv(input_file, encoding='latin-1')
-        analysis_results = analyze_data(df)
-        visualize_data(df, output_dir)
-        generate_story(df, analysis_results, output_dir)
-        print(f"Analysis completed. Results saved in '{output_dir}' directory.")
-    except Exception as e:
-        print(f"Error processing file: {e}")
-        sys.exit(1)
+    print(f"Analysis complete. Results saved to {analyzer.output_dir}")
 
 
 if __name__ == "__main__":

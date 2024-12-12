@@ -19,7 +19,7 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from typing import Dict, Any, List
-
+import glob
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
@@ -28,6 +28,7 @@ from sklearn.feature_selection import mutual_info_regression
 from sklearn.pipeline import Pipeline
 
 sns.set_theme(style="whitegrid")
+
 
 class AutomatedAnalysis:
     def __init__(self, csv_path: str, aiproxy_token: str):
@@ -398,10 +399,16 @@ def main():
     if not aiproxy_token:
         print("AIPROXY_TOKEN environment variable not set")
         sys.exit(1)
-
     # Run analysis
-    analyzer = AutomatedAnalysis(csv_path, aiproxy_token)
-    analyzer.run_analysis()
+    if len(sys.argv) > 2:
+        csv_files = glob.glob("*.csv")
+        for csv_path in csv_files:
+            print("Loaded CSV file:", csv_path)
+            analyzer = AutomatedAnalysis(csv_path, aiproxy_token)
+            analyzer.run_analysis()
+    else:
+        analyzer = AutomatedAnalysis(csv_path, aiproxy_token)
+        analyzer.run_analysis()
 
     print(f"Analysis complete. Results saved to {analyzer.output_dir}")
 

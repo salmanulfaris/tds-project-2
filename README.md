@@ -2,6 +2,6 @@
 
 ## Available Reports :
 
-- [Media](media/README.md)
-- [Good Reads](goodreads/README.md)
-- [Happiness](happiness/README.md)
+- [Media](prev/media/README.md)
+- [Good Reads](prev/goodreads/README.md)
+- [Happiness](prev/happiness/README.md)
